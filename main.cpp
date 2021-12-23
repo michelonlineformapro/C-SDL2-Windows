@@ -144,12 +144,28 @@ void close(){
 
 //Chager les différentes images
 SDL_Surface* loadSurface(std::string path){
+
+    //Variable pour optimiser les photos
+    SDL_Surface* optimizedSurface = NULL;
+
     //Charger une image avec un chemin precis
     SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
+
+    //Si la photo n'a pas la bonne taille (800*600) on optimise la photo avec strech
+
     if(loadedSurface == NULL){
         printf("Erreur de chargement des photos BMP %s!", path.c_str(), SDL_GetError());
+    }else{
+        //convertit la surface auformat de l'ecran
+        optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, 0);
+        if(optimizedSurface == NULL){
+            printf("Erreur de coversion de l'image %s", path.c_str(), SDL_GetError());
+        }
+        //Copy de l'original et conversion au nouveau format
+        //L'original est encore en memoire et on doit liberer l'espace
+        SDL_FreeSurface(loadedSurface);
     }
-    return loadedSurface;
+    return optimizedSurface;
 }
 
 
@@ -198,8 +214,14 @@ int main(int argc, char* argv[]) {
                         }
                     }
                 }
+                //Appliquer l'etirement de l'image pour l'optimiser
+                SDL_Rect stretchRect;
+                stretchRect.x = 0;
+                stretchRect.y = 0;
+                stretchRect.w = SCREEN_WIDTH;
+                stretchRect.h = SCREEN_HEIGHT;
                 //Sinon tous marche (source de image + null + destination image + null)
-                SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, NULL);
+                SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, &stretchRect);
                 //Mise a jour de la fenètre
                 SDL_UpdateWindowSurface(gWindow);
             }
