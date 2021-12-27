@@ -1,6 +1,8 @@
 #include <SDL.h>
+#include <SDL_image.h>
 #include <cstdio>
 #include <string>
+
 //LES SOURCES : http://lazyfoo.net/tutorials/SDL/01_hello_SDL/index2.php
 
 //largeur et hauteur de la fenètre
